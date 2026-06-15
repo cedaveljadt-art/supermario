@@ -3,6 +3,7 @@ kaboom({
     height: 500,
     font: "sinko",
     canvas:document.getElementById("canvas"),
+    touchToMouse: true
 })
 function fullscreen(){
     var elem = document.getElementById("canvas");
@@ -50,6 +51,9 @@ scene("start",()=>{
         origin("center")
     ])
     onKeyPress("space",()=>{
+        go("game")
+    })
+    onMouseDown(()=>{
         go("game")
     })
     onKeyPress("1",fullscreen)
@@ -102,6 +106,7 @@ scene("game",()=>{
     onKeyDown("space",jump)
     onKeyDown("up",jump)
     onKeyDown("w",jump)
+    onMouseDown(jump)
     score=0
     mario.onCollide("enemy",()=>{
         song.stop()
@@ -168,6 +173,9 @@ scene("gameOver",(score)=>{
         origin("center")
     ])
     onKeyPress("space",()=>{
+        go("game")
+    })
+    onMouseDown(()=>{
         go("game")
     })
 })
