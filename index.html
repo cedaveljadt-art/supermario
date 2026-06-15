@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mario</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: black;
+            color: white;
+            text-align: center;
+            flex-direction: column;
+            margin:0;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <h1>Mario run</h1>
+    <canvas id="canvas"></canvas>
+    <h5>Press 1 for fullscreen</h5>
+    <h5>Press 2 for dev mode</h5>
+</body>
+    <script>
+        canvas = document.getElementById("canvas");
+        window.onload = () => {
+            canvas.focus()
+        }
+    </script>
+    <script src="https://unpkg.com/kaboom@2000.2.10/dist/kaboom.js"></script>
+    <script src="script.js"></script>
+</html>
