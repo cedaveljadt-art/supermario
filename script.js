@@ -37,6 +37,7 @@ loadSprite("shell","sprites/enemiesshell.png", {
 loadSprite("ground","sprites/ground-tiled.png");
 loadSound("jump","sounds/jump.mp3")
 loadSound("end","sounds/end.mp3")
+loadSound("song","sounds/song.mp3")
 scene("start",()=>{
     onKeyPress("2",()=>{debug.inspect=!debug.inspect})
     add([
@@ -53,7 +54,11 @@ scene("start",()=>{
     })
     onKeyPress("1",fullscreen)
 })
+started=false
 scene("game",()=>{
+    if(!started){
+        song=play("song",{loop:true})
+    }
     onKeyPress("1",fullscreen)
     onKeyPress("2",()=>{debug.inspect=!debug.inspect})
     bg=add([
@@ -99,6 +104,7 @@ scene("game",()=>{
     onKeyDown("w",jump)
     score=0
     mario.onCollide("enemy",()=>{
+        song.stop()
         play("end")
         go("gameOver", score)
     })
@@ -131,6 +137,11 @@ scene("game",()=>{
 })
 high = 0
 scene("gameOver",(score)=>{
+    started=false
+    wait(3,()=>{
+        song=play("song",{loop:true})
+        started=true
+    })
     onKeyPress("1",fullscreen)
     onKeyPress("2",()=>{debug.inspect=!debug.inspect})
     if(high< score){
