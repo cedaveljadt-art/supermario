@@ -98,7 +98,7 @@ scene("game",()=>{
     mario = add([
         sprite("mario"),
         pos(80,40),
-        area(),
+        area({width:16,height:32,offset:vec2(16,0)}),
         solid(),
         body(),
         scale(2)
@@ -110,7 +110,7 @@ scene("game",()=>{
             pos(width(),height()-95),
             origin("botright"),
             move(LEFT,250),
-            area(),
+            area({width:16,height:16,offset:vec2(-16,0)}),
             solid(),
             scale(2),
             "enemy"
@@ -137,6 +137,12 @@ scene("game",()=>{
         pos(40,40)
     ])
     onUpdate(()=>{
+        for (const e of get("enemy")) {
+            if (e.pos.x < -64) {
+                destroy(e)
+            }
+        }
+        console.log(get().length)
         score+=1
         lblScore.text = "Score: " + score
         if(mario.isGrounded() && !running){
