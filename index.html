@@ -17,13 +17,18 @@
             margin:0;
             overflow: hidden;
         }
+        #fullscreenbutton,#devmodebutton{
+            display:none;
+        }
     </style>
 </head>
 <body>
     <h1>Mario run</h1>
     <canvas id="canvas"></canvas>
-    <h5>Press 1 for fullscreen</h5>
-    <h5>Press 2 for dev mode</h5>
+    <h5 id="fullscreen">Press 1 for fullscreen</h5>
+    <button id="fullscreenbutton" onclick="fullscreen()">Click for fullscreen</button>
+    <h5 id="devmode">Press 2 for dev mode</h5>
+    <button id="devmodebutton" onclick="devmode()">Click for dev mode</button>
 </body>
     <script>
         canvas = document.getElementById("canvas");
