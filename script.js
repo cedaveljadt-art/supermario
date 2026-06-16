@@ -7,7 +7,7 @@ kaboom({
 })
 function fullscreen(){
     var elem = document.getElementById("canvas");
-    function openFullscreen() {
+    elem.focus()
     if (elem.requestFullscreen) {
         elem.requestFullscreen();
     } else if (elem.webkitRequestFullscreen) {
@@ -15,8 +15,6 @@ function fullscreen(){
     } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen();
     }
-
-}
 }
 loadSprite("mario","sprites/mario.png", {
     sliceX: 26,
@@ -39,6 +37,27 @@ loadSprite("ground","sprites/ground-tiled.png");
 loadSound("jump","sounds/jump.mp3")
 loadSound("end","sounds/end.mp3")
 loadSound("song","sounds/song.mp3")
+lasttap=0
+function isMobile() {
+    try {
+        const hasTouch = navigator.maxTouchPoints && navigator.maxTouchPoints > 0;
+        const isMobileUA = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
+            .test(navigator.userAgent);
+
+        return hasTouch || isMobileUA;
+    } catch (error) {
+        return false;
+    }
+}
+if (isMobile()){
+    document.getElementById("fullscreen").style.display="none"
+    document.getElementById("fullscreenbutton").style.display="flex"
+    document.getElementById("devmode").style.display="none"
+    document.getElementById("devmodebutton").style.display="flex"
+}
+function devmode(){
+    debug.inspect=!debug.inspect
+}
 scene("start",()=>{
     onKeyPress("2",()=>{debug.inspect=!debug.inspect})
     add([
@@ -53,7 +72,7 @@ scene("start",()=>{
     onKeyPress("space",()=>{
         go("game")
     })
-    onMouseDown(()=>{
+    onClick(()=>{
         go("game")
     })
     onKeyPress("1",fullscreen)
@@ -175,7 +194,7 @@ scene("gameOver",(score)=>{
     onKeyPress("space",()=>{
         go("game")
     })
-    onMouseDown(()=>{
+    onClick(()=>{
         go("game")
     })
 })
