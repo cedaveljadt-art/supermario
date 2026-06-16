@@ -167,6 +167,7 @@ scene("game",()=>{
 })
 high = 0
 scene("gameOver",(score)=>{
+    high = Number(localStorage.getItem("high")) || 0
     started=false
     wait(3,()=>{
         song=play("song",{loop:true})
@@ -176,6 +177,7 @@ scene("gameOver",(score)=>{
     onKeyPress("2",()=>{debug.inspect=!debug.inspect})
     if(high< score){
         high = score
+        localStorage.setItem("high", score);
     }
   
     add([
