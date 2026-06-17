@@ -23,7 +23,8 @@ loadSprite("mario","sprites/mario.png", {
         idle:{from:8,to:8},
         run: { from: 9, to: 11, loop: true },
         jumpstart: { from: 12, to: 12 },
-        jumpend: { from: 13, to: 13 } 
+        jumpend: { from: 13, to: 13 },
+        small:{from:0,to:0} 
     }
 })
 loadSprite("shell","sprites/enemiesshell.png", {
@@ -33,10 +34,39 @@ loadSprite("shell","sprites/enemiesshell.png", {
         run: { from: 19, to: 20, loop: true },
     }
 })
+loadSprite("turtle","sprites/enemies.png", {
+    sliceX: 21,
+    sliceY: 1,
+    anims: {
+        run: { from: 3, to: 4, loop: true },
+    }
+})
+loadSprite("turtlebomber","sprites/enemies.png", {
+    sliceX: 21,
+    sliceY: 1,
+    anims: {
+        run: { from: 14, to: 16, loop: true },
+    }
+})
+loadSprite("turtlewalking","sprites/enemies.png", {
+    sliceX: 21,
+    sliceY: 1,
+    anims: {
+        run: { from: 9, to: 10, loop: true },
+    }
+})
+loadSprite("hammer","sprites/enemies.png", {
+    sliceX: 21,
+    sliceY: 1,
+    anims: {
+        run: { from: 13, to: 13, loop: true },
+    }
+})
 loadSprite("ground","sprites/ground-tiled.png");
 loadSound("jump","sounds/jump.mp3")
 loadSound("end","sounds/end.mp3")
 loadSound("song","sounds/song.mp3")
+loadSound("throw","sounds/throw.mp3")
 lasttap=0
 function isMobile() {
     try {
@@ -78,7 +108,11 @@ scene("start",()=>{
     onKeyPress("1",fullscreen)
 })
 started=false
+score=0
+dead=false
 scene("game",()=>{
+    dead=false
+    score=0
     if(!started){
         song=play("song",{loop:true})
     }
@@ -105,16 +139,89 @@ scene("game",()=>{
     ])
     mario.play("idle")
     function enemy(){
-       e=add([
-            sprite("shell"),
-            pos(width(),height()-95),
-            origin("botright"),
-            move(LEFT,250),
-            area({width:16,height:16,offset:vec2(-16,0)}),
-            solid(),
-            scale(2),
-            "enemy"
-       ])
+        if (dead) return
+        if(score<350){
+            r=0
+        }
+        else if(score<1500){
+            r=Math.floor(rand(0, 2))
+        }
+        else if(score<2000){
+            r=Math.floor(rand(0, 3))
+        }
+        else{
+            r=Math.floor(rand(0, 4))
+        }
+        if(get("bomber").length > 0 || get("hammer").length>0){
+            r=Math.floor(rand(0, 2))
+        }
+        if(r==0){
+            r1=Math.floor(rand(0, 2))
+            if(r1==0){
+                e=add([
+                sprite("shell"),
+                pos(width(),height()-95),
+                origin("botright"),
+                move(LEFT,250),
+                area({width:16,height:16,offset:vec2(-16,0)}),
+                solid(),
+                scale(2),
+                "enemy"
+            ])
+            }
+            else{
+                e=add([
+                    sprite("turtlewalking"),
+                    pos(width(),height()-95),
+                    origin("botright"),
+                    move(LEFT,250),
+                    area({width:16,height:24,offset:vec2(-16,0)}),
+                    solid(),
+                    scale(2),
+                    "enemy"
+                ])
+            }
+        }
+        else if(r==1){
+            e=add([
+                sprite("turtle"),
+                pos(width(),height()-95),
+                origin("botright"),
+                move(LEFT,270),
+                area({width:16,height:24,offset:vec2(-18,0)}),
+                solid(),
+                scale(2),
+                "enemy"
+            ])
+        }
+        else if(r==2){
+            e=add([
+                sprite("turtlebomber"),
+                pos(width(),100),
+                origin("botright"),
+                move(LEFT,180),
+                area({width:16,height:24,offset:vec2(-16,0)}),
+                solid(),
+                scale(2),
+                "enemy",
+                "bomber"
+            ])
+        }
+        else if(r==3){
+            e=add([
+                sprite("hammer"),
+                pos(width(),100),
+                origin("center"),
+                move(LEFT,600),
+                area({width:16,height:16}),
+                solid(),
+                scale(2),
+                rotate(0),
+                "enemy",
+                "hammer"
+            ])
+            play("throw")
+        }
        e.play("run")
         wait(rand(0.7,1.3),enemy)
     }
@@ -129,18 +236,28 @@ scene("game",()=>{
     score=0
     mario.onCollide("enemy",()=>{
         song.stop()
-        play("end")
-        go("gameOver", score)
+        mario.play("small")
+        every("enemy", (e) => e.paused = true)
+        shake(2.8)
+        dead=true
+        wait(1, () => {
+            go("gameOver", score)
+            play("end")
+        })
     })
     lblScore = add([
         text("Score: " + score, {size:30}),
         pos(40,40)
     ])
     onUpdate(()=>{
+        if (dead) return
         for (const e of get("enemy")) {
             if (e.pos.x < -64) {
                 destroy(e)
             }
+        }
+        for (const h of get("hammer")) {
+            h.angle+=20
         }
         console.log(get().length)
         score+=1
@@ -152,6 +269,7 @@ scene("game",()=>{
         }
     })
     function jump(){
+        if (dead) return
         if(mario.isGrounded() && !jumping){
             running=false
             jumping=true
